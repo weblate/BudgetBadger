@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BudgetBadger.Core.Files;
 using BudgetBadger.Core.Settings;
 using BudgetBadger.Core.Sync;
+using BudgetBadger.Core.Utilities;
 using BudgetBadger.Models;
 using Dropbox.Api;
 using Dropbox.Api.Files;
@@ -21,30 +22,6 @@ namespace BudgetBadger.FileSyncProvider.Dropbox
         {
             _settings = settings;
             _appKey = appKey;
-        }
-
-        static Stream Compress(Stream decompressed)
-        {
-            var compressed = new MemoryStream();
-            using (var zip = new GZipStream(compressed, CompressionLevel.Fastest, true))
-            {
-                decompressed.CopyTo(zip);
-            }
-
-            compressed.Seek(0, SeekOrigin.Begin);
-            return compressed;
-        }
-
-        static Stream Decompress(Stream compressed)
-        {
-            var decompressed = new MemoryStream();
-            using (var zip = new GZipStream(compressed, CompressionMode.Decompress, true))
-            {
-                zip.CopyTo(decompressed);
-            }
-
-            decompressed.Seek(0, SeekOrigin.Begin);
-            return decompressed;
         }
 
         public async Task<Result> PullFilesTo(IDirectoryInfo destinationDirectory)
@@ -77,7 +54,7 @@ namespace BudgetBadger.FileSyncProvider.Dropbox
                         {
                             if (compressed)
                             {
-                                using (var uncompressedFilestream = Decompress(fileStream))
+                                using (var uncompressedFilestream = fileStream.Decompress())
                                 {
                                     await uncompressedFilestream.CopyToAsync(destinationFile);
                                 }
@@ -113,7 +90,7 @@ namespace BudgetBadger.FileSyncProvider.Dropbox
                 foreach (var file in files)
                 {
                     using (var fileStream = file.Open())
-                    using (var compressedFileStream = Compress(fileStream))    
+                    using (var compressedFileStream = fileStream.Compress())    
                     using (var dbx = new DropboxClient(refreshToken, _appKey))
                     {
                         if (file.Name.EndsWith(".gz"))
