@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using BudgetBadger.Core.CloudSync;
 using BudgetBadger.Core.DataAccess;
-using BudgetBadger.Core.Logic;
 using BudgetBadger.Models;
 
-namespace BudgetBadger.Logic
+namespace BudgetBadger.Core.Logic
 {
     public class EnvelopeSyncLogic : IEnvelopeSyncLogic
     {

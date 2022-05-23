@@ -1,20 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using BudgetBadger.Core.CloudSync;
 using BudgetBadger.Core.DataAccess;
-using BudgetBadger.Core.Logic;
 using BudgetBadger.Models;
 
-namespace BudgetBadger.Logic
+namespace BudgetBadger.Core.Logic
 {
-    public class PayeeSyncLogic : IPayeeSyncLogic
+    public class TransactionSyncLogic : ITransactionSyncLogic
     {
         readonly IDataAccess _localDataAccess;
         readonly IDataAccess _remoteDataAccess;
 
-        public PayeeSyncLogic(IDataAccess localDataAccess,
-                             IDataAccess remoteDataAccess)
+        public TransactionSyncLogic(IDataAccess localDataAccess,
+                                   IDataAccess remoteDataAccess)
         {
             _localDataAccess = localDataAccess;
             _remoteDataAccess = remoteDataAccess;
@@ -27,7 +24,7 @@ namespace BudgetBadger.Logic
             
             try
             {
-                await mergeLogic.MergePayeesAsync(_remoteDataAccess, _localDataAccess);
+                await mergeLogic.MergeTransactionsAsync(_remoteDataAccess, _localDataAccess);
             }
             catch (Exception ex)
             {
@@ -47,7 +44,7 @@ namespace BudgetBadger.Logic
             
             try
             {
-                await mergeLogic.MergePayeesAsync(_localDataAccess, _remoteDataAccess);
+                await mergeLogic.MergeTransactionsAsync(_localDataAccess, _remoteDataAccess);
             }
             catch (Exception ex)
             {
@@ -72,6 +69,6 @@ namespace BudgetBadger.Logic
             }
 
             return result;
-        } 
+        }
     }
 }
